@@ -12,9 +12,6 @@ public class AddTargetOnClick : MonoBehaviour
 
     private static TargetActor currentTarget;
 
-    public static int targetIndex = -1;
-    public static string[] targetLabels = new string[] { "Drone", "Personel", "Vehicle", "Objective", "Android" };
-
     public static OnlineMapsMarker selectedMarker = null;
 
     private double lng, lat;
@@ -32,26 +29,7 @@ public class AddTargetOnClick : MonoBehaviour
     }
 
 
-    public void SetPersonelTarget()
-    {
-        lat = 0;
-        lng = 0;
-        targetIndex = 1;
 
-    }
-
-    public void SetVehicleTarget()
-    {
-        lat = 0;
-        lng = 0;
-        targetIndex = 2;
-    }
-    public void SetObjectiveTarget()
-    {
-        lat = 0;
-        lng = 0;
-        targetIndex = 3;
-    }
 
     private void OnMapClick()
     {
@@ -71,16 +49,11 @@ public class AddTargetOnClick : MonoBehaviour
         string label = "Target " + (OnlineMapsMarkerManager.CountItems + 1);
 
         // make sure we have selected a target to place first
-        if (targetIndex != -1 && (lat != 0 && lng != 0))
+        if (lat != 0 && lng != 0)
         {
             //create the new target data
-            TargetType newType = (TargetType)(targetIndex); // add 1 to the selected type to match what is expected
-            TargetActor newTarget = new TargetActor(newType, lat, lng);
+            TargetActor newTarget = new TargetActor(0, lat, lng);
             newTarget._Alt = alt;
-
-            // push to database
-            FirebaseInit.instance.PushNewTarget(newTarget);
-
         }
 
     }
@@ -109,19 +82,14 @@ public class AddTargetOnClick : MonoBehaviour
     {
         ClearMarkerData();
         // set that we aren't adding new targets right now
-        targetIndex = -1;
+
 
         // clear all the current markers
         OnlineMapsMarkerManager.RemoveAllItems();
 
 
-        foreach (string key in FirebaseInit.instance.userAddedTargets)
-        {
-            FirebaseInit.instance.RemoveAddedTarget(key);
-        }
-
         // re-add the user
-        OnlineMapsMarkerManager.CreateItem(SURGE_GPS.Instance._UserCoords, "User");
+        OnlineMapsMarkerManager.CreateItem(ARVINO_GPS.Instance._UserCoords, "User");
 
     }
 
@@ -133,7 +101,7 @@ public class AddTargetOnClick : MonoBehaviour
 
     }
 
-    public static void Remove_Target(SurgeActor removedTarget)
+    public static void Remove_Target(ARVINOActor removedTarget)
     {
         // we know that this actor needs to be removed, but we need to figure out which marker represents it
         List<OnlineMapsMarker> currentMarkerList = OnlineMapsMarkerManager.instance.items;
@@ -167,31 +135,10 @@ public class AddTargetOnClick : MonoBehaviour
         if (indexOfMarker != -1)
             OnlineMapsMarkerManager.RemoveItem(currentMarkerList[indexOfMarker]);
 
-        FirebaseInit.instance.RemoveAddedTarget(currentTarget._ID);
-
-    }
-
-    public static void ListenTo_SelectedTarget()
-    {
-        // we want to set this target as our active listening target
-        List<OnlineMapsMarker> currentMarkerList = OnlineMapsMarkerManager.instance.items;
-        int indexOfMarker = -1;
-
-        foreach (OnlineMapsMarker marker in currentMarkerList)
-        {
-            // run through all of the markers and match up the data
-            TargetActor targetMarker = marker["data"] as TargetActor;
-            if (targetMarker != null && (targetMarker._ID == currentTarget._ID))
-            {
-                indexOfMarker = OnlineMapsMarkerManager.instance.items.IndexOf(marker);
-                UIManager.instance.SetActiveListeningTarget(targetMarker._ID);
-            }
-        }
-
-
-
 
 
     }
+
+
 
 }

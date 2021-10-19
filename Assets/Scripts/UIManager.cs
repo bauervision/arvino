@@ -171,43 +171,11 @@ public class UIManager : MonoBehaviour
         map.SetActive(displayMap);
         mapTargetButtons.SetActive(displayMap);
         ShowTargets.SetActive(displayMap);
-        AddTargetOnClick.targetIndex = -1;// set that we can't add targets to the map
+
 
     }
 
 
-    public void SetActiveListeningTarget(string targetID)
-    {
-        foreach (GameObject target in TargetManager.instance.loadedTargets)
-        {
-            if (target.GetComponent<SURGE_Target>()._ID == targetID)
-            {
-                // if we already listening to this target
-                if (target.GetComponent<SURGE_Target>()._isListening)
-                {
-                    listenToText.text = "Listen To";
-                    target.GetComponent<SURGE_Target>().StopListeningTarget();
-                }
-                else
-                {
-                    listenToText.text = "Stop Listen";
-                    target.GetComponent<SURGE_Target>().SetActiveListeningTarget();
-                }
-            }
-
-
-        }
-    }
-
-    public void SetAudioInterval(int value)
-    {
-        switch (value)
-        {
-            case 0: audioInterval = 10; break;
-            case 1: audioInterval = 30; break;
-            default: audioInterval = 60; break;
-        }
-    }
 
 
 
@@ -218,7 +186,7 @@ public class UIManager : MonoBehaviour
         HideTargets.SetActive(true);
         Targets.SetActive(true);
         // since we have decided to open the target panel and want to add targets, best we zoom to a reasonable level
-        OnlineMaps.instance.SetPositionAndZoom(SURGE_GPS.Instance._UserLon, SURGE_GPS.Instance._UserLat, 18);
+        OnlineMaps.instance.SetPositionAndZoom(ARVINO_GPS.Instance._UserLon, ARVINO_GPS.Instance._UserLat, 18);
 
     }
 
@@ -227,7 +195,7 @@ public class UIManager : MonoBehaviour
         ShowTargets.SetActive(true);
         HideTargets.SetActive(false);
         Targets.SetActive(false);
-        AddTargetOnClick.targetIndex = -1;// set that we can't add targets to the map
+
     }
 
 

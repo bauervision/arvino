@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 public enum TargetType { DRONE, PERSON, VEHICLE, OBJECTIVE, ANDROID };
 
 [System.Serializable]
-public class TargetActor : SurgeActor
+public class TargetActor : ARVINOActor
 {
 
     ///<summary> The active drone that has detected and is actively tracking this target </summary>
