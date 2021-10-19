@@ -329,9 +329,6 @@ public class ARVINO_GPS : MonoBehaviour
             _UserLat = EdLatitude;
             _UserLon = EdLongitude;
             _UserCoords = new Vector2((float)_UserLon, (float)_UserLat);
-            //UpdateUI();
-
-
 
             // if we have added the user marker, handle its rotation
             if (OnlineMapsMarkerManager.instance.items.Count == 0)
@@ -340,9 +337,6 @@ public class ARVINO_GPS : MonoBehaviour
                 OnlineMapsMarkerManager.instance.items[0].rotationDegree = compassAngle;
 
         }
-
-
-
     }
 
     private void UpdateUI()

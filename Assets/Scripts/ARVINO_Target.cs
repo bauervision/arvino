@@ -60,7 +60,6 @@ public class ARVINO_Target : MonoBehaviour
 
     private Coroutine runningCoroutine;
 
-    private bool isBehindYou = false;
 
     ///<summary>When the file initial loads, find and create all the key required assets </summary>
     private void Awake()
@@ -238,7 +237,7 @@ public class ARVINO_Target : MonoBehaviour
         // if this target is in view of the camera
         if (Vector3.Dot(mainCam.transform.forward, _Heading) > 0)
         {
-            isBehindYou = false;
+
             myTracker.SetActive(true);
 
             // process bounding box updates now that it is in view
@@ -252,7 +251,7 @@ public class ARVINO_Target : MonoBehaviour
         }
         else
         {
-            isBehindYou = true;
+
             myTracker.SetActive(false);
         }
 
