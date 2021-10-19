@@ -2252,7 +2252,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 2094956178}
+  m_TargetGraphic: {fileID: 0}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
@@ -2361,7 +2361,6 @@ GameObject:
   m_Component:
   - component: {fileID: 595668388}
   - component: {fileID: 595668387}
-  - component: {fileID: 595668389}
   m_Layer: 0
   m_Name: TargetManager
   m_TagString: Untagged
@@ -2389,7 +2388,6 @@ MonoBehaviour:
   - {r: 0, g: 1, b: 0.13840461, a: 1}
   targetRing: {fileID: 278767831}
   compass3d: {fileID: 1839427644}
-  NorthReversed3d: {fileID: 0}
   gpsDataText: {fileID: 1099721024}
   headingText: {fileID: 0}
   LoadingText: {fileID: 0}
@@ -2403,7 +2401,6 @@ MonoBehaviour:
   - {fileID: 2800000, guid: c60c385a3ce36984b88e0860ab95f178, type: 3}
   - {fileID: 2800000, guid: a8f2a263c56429440a8745bbe1c6e656, type: 3}
   - {fileID: 2800000, guid: ac0f344db083fdf449d69abb70bd37e5, type: 3}
-  targetCount: {fileID: 0}
 --- !u!4 &595668388
 Transform:
   m_ObjectHideFlags: 0
@@ -2418,39 +2415,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &595668389
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 595668386}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebe26d05d10bce6469aa47a89b476d13, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  connectedColor: {r: 0.29117295, g: 0.9056604, b: 0.15720895, a: 1}
-  disconnectedColor: {r: 0.9528302, g: 0.10247413, b: 0.10247413, a: 1}
-  sendingColor: {r: 0.95294124, g: 0.5294118, b: 0.19215688, a: 1}
-  OnFirebaseInit:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  rawTargets: []
-  inRangeTargetList: []
-  userAddedTargets: []
 --- !u!1 &617184477
 GameObject:
   m_ObjectHideFlags: 0
@@ -3344,7 +3308,6 @@ RectTransform:
   - {fileID: 1790905285}
   - {fileID: 1871852314}
   - {fileID: 963673493}
-  - {fileID: 1273586720}
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4145,30 +4108,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   compassRing: {fileID: 1839427643}
   baseUI: {fileID: 1483923300}
-  optionsPanel: {fileID: 1930064053}
-  gpsDebugPanel: {fileID: 0}
-  statusPanel: {fileID: 0}
-  distanceSlider: {fileID: 0}
   map: {fileID: 1623235223}
   mapTargetButtons: {fileID: 1807106811}
-  CustomCoordsPanel: {fileID: 0}
   arCamera: {fileID: 2005604711}
   ShowTargets: {fileID: 18945437}
   HideTargets: {fileID: 1790905284}
   Targets: {fileID: 246510980}
   selectedTargetPanel: {fileID: 963673492}
-  distanceFilterText: {fileID: 0}
-  listenToText: {fileID: 0}
   showCompassRing: 1
   showTargetRing: 1
   displayGeometry: 0
   displayDistanceFilter: 0
   displayMap: 0
-  displayFriendlies: 0
   displayBox: 1
   displayInActive: 0
   alwaysActive: 1
-  displayCustomCoords: 0
   distanceFilter: 0.5
   onMinimalUIActive:
     m_PersistentCalls:
@@ -4801,160 +4755,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1205587298}
   m_CullTransparentMesh: 0
---- !u!1001 &1217442034
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 900817933}
-    m_Modifications:
-    - target: {fileID: 7915887692084342192, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_Text
-      value: Log
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342192, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_Color.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342192, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_Color.g
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342192, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_Color.r
-      value: 0.3233776
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342192, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_FontData.m_MaxSize
-      value: 67
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342192, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_FontData.m_FontSize
-      value: 62
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_Pivot.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_Pivot.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342207, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_Name
-      value: TextLog
-      objectReference: {fileID: 0}
-    - target: {fileID: 7915887692084342207, guid: a9e01b4efc136864f986a880f82404f6,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: a9e01b4efc136864f986a880f82404f6, type: 3}
 --- !u!1 &1266612706
 GameObject:
   m_ObjectHideFlags: 0
@@ -5057,12 +4857,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1266612706}
   m_CullTransparentMesh: 0
---- !u!224 &1273586720 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 7915887692084342194, guid: a9e01b4efc136864f986a880f82404f6,
-    type: 3}
-  m_PrefabInstance: {fileID: 1217442034}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1279929150
 GameObject:
   m_ObjectHideFlags: 0
@@ -8247,7 +8041,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2005604708}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44238d90dc914d24a9a7ef41bb0e440d, type: 3}
+  m_Script: {fileID: 11500000, guid: a18cd7e368d53a446bde1e5866355352, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   compass3d: {fileID: 8634315773558688410}
@@ -8260,33 +8054,16 @@ MonoBehaviour:
   _UserLon: 0
   _UserAlt: 0
   _UserCoords: {x: 0, y: 0}
-  gpsMode: 1
   ShowLARCameraOnBackground: 1
   ShowDebugConsole: 0
-  EdLatitude: 36.69558417414638
+  EdLatitude: 36.6955841741464
   EdLongitude: -76.198389718993
-  EdAltitude: 20
+  EdAltitude: 0
   MouseSensibility: 5
-  ReceiveShadows: 0
+  ReceiveShadows: 1
   gpsEnabled:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  MyAltText: {fileID: 0}
-  MyLatText: {fileID: 0}
-  MyLonText: {fileID: 0}
-  elevationSourceText: {fileID: 0}
+      m_Calls: []
   isGPSAltitude: 0
   GPS: 0
 --- !u!81 &2005604710

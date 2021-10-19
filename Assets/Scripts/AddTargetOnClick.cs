@@ -7,8 +7,6 @@ using System.Collections.Generic;
 
 public class AddTargetOnClick : MonoBehaviour
 {
-    public static Text targetTypeText;
-
 
     private static TargetActor currentTarget;
 
@@ -16,11 +14,7 @@ public class AddTargetOnClick : MonoBehaviour
 
     private double lng, lat;
 
-    private void Awake()
-    {
-        targetTypeText = GameObject.Find("TargetTypeText").GetComponent<Text>();
 
-    }
 
     private void Start()
     {
@@ -64,7 +58,7 @@ public class AddTargetOnClick : MonoBehaviour
         UIManager.instance.selectedTargetPanel.SetActive(true);
         UIHover.overUI = false;
         currentTarget = marker["data"] as TargetActor;
-        targetTypeText.text = ((TargetType)currentTarget._Type).ToString();
+
 
     }
 
@@ -97,7 +91,6 @@ public class AddTargetOnClick : MonoBehaviour
     private void ClearMarkerData()
     {
         UIManager.instance.selectedTargetPanel.SetActive(false);
-        targetTypeText.text = "";
 
     }
 
@@ -134,8 +127,6 @@ public class AddTargetOnClick : MonoBehaviour
 
         if (indexOfMarker != -1)
             OnlineMapsMarkerManager.RemoveItem(currentMarkerList[indexOfMarker]);
-
-
 
     }
 

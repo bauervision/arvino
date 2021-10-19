@@ -10,7 +10,7 @@ public class TargetManager : MonoBehaviour
     public Color[] indicatorColors;
     public RectTransform targetRing = null;
     public Transform compass3d = null;
-    public Transform NorthReversed3d = null;
+
     public Text gpsDataText;
     public Text headingText;
 
@@ -26,8 +26,6 @@ public class TargetManager : MonoBehaviour
 
 
     public Texture2D[] targets;
-
-    public Text targetCount;
 
 
     private Vector2 userCoords = new Vector2(0, 0);
@@ -67,7 +65,6 @@ public class TargetManager : MonoBehaviour
             targetRing.rotation = Quaternion.Euler(0, 0, zAngle);
             compass3d.localRotation = Quaternion.Euler(0, zAngle, 0);
 
-            NorthReversed3d.localRotation = Quaternion.Euler(0, -zAngle, 0);
             headingText.text = DegreesToCardinalDetailed(Input.compass.trueHeading);
         }
 
@@ -78,16 +75,9 @@ public class TargetManager : MonoBehaviour
         // once we start getting target data
         if ((loadedTargets.Count > 0) || (loadedFriendlies.Count > 0))
         {
-            targetCount.text = "";
-
             HandleFiltering();
         }
-        else // no targets have been loaded
-        {
-            // we have received target data so we need to process it
-            targetCount.text = "No AR Targets, listening for updates...";
 
-        }
     }
 
     #region UI Updates
@@ -108,12 +98,6 @@ public class TargetManager : MonoBehaviour
         // setup the Vector2 for this target
         Vector2 targetCoords = new Vector2((float)tracker.GetComponent<ARVINO_Target>()._Lon, (float)tracker.GetComponent<ARVINO_Target>()._Lat);
 
-        // if this is a friendly but we dont want to see them, hide
-        if (!UIManager.instance.displayFriendlies && isFriendly)
-        {
-            tracker.GetComponent<ARVINO_Target>().HideMyTracker();
-            return;
-        }
 
         if (GetDistanceFromTarget(targetCoords) > UIManager.instance.distanceFilter)
         {

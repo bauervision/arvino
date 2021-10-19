@@ -63,10 +63,8 @@ public class ARVINO_GPS : MonoBehaviour
     public static float compassAngle;
 
     public UnityEvent gpsEnabled = new UnityEvent();
-    public Text MyAltText;
-    public Text MyLatText;
-    public Text MyLonText;
-    public Text elevationSourceText;
+
+
 
     public bool isGPSAltitude = false;
 
@@ -82,23 +80,7 @@ public class ARVINO_GPS : MonoBehaviour
         customLong = newLong;
     }
 
-    public void SetCustomCoords()
-    {
-        useCustomCoords = true;
-        MyLatText.text = customLat;
-        MyLonText.text = customLong;
 
-        _UserLat = float.Parse(customLat);
-        _UserLon = float.Parse(customLong);
-
-        // now update the map
-        _map.SetPositionAndZoom(_UserLon, _UserLat, 18);
-        // update the marker
-        OnlineMapsMarkerManager.instance.items[0].SetPosition(_UserLon, _UserLat);
-        // close the panel
-        UIManager.instance.ToggleCustomCoords();
-
-    }
 
 
     private GameObject cameraContainer;
@@ -117,9 +99,6 @@ public class ARVINO_GPS : MonoBehaviour
     // general
     private bool arReady = false;
     public bool GPS = false;
-    private Text DebugGPS;
-    private Text DebugConsole;
-
 
     private Vector2 currentRotation;
 
@@ -139,7 +118,7 @@ public class ARVINO_GPS : MonoBehaviour
                 Permission.RequestUserPermission(Permission.Camera);
         }
 
-        MyAltText = GameObject.Find("myAlt").GetComponent<Text>();
+
 
     }
 
@@ -152,10 +131,8 @@ public class ARVINO_GPS : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         // load debugUI
-        DebugGPS = transform.Find("AR_BackgroundCamera").Find("UI_Background").Find("DebugGPS").gameObject.GetComponent<Text>();
-        DebugConsole = transform.Find("AR_BackgroundCamera").Find("UI_Background").Find("DebugConsole").gameObject.GetComponent<Text>();
-        background = transform.Find("AR_BackgroundCamera").Find("UI_Background").Find("Background").gameObject.GetComponent<RawImage>();
-        fit = transform.Find("AR_BackgroundCamera").Find("UI_Background").Find("Background").gameObject.GetComponent<AspectRatioFitter>();
+        // background = transform.Find("AR_BackgroundCamera").Find("UI_Background").Find("Background").gameObject.GetComponent<RawImage>();
+        // fit = transform.Find("AR_BackgroundCamera").Find("UI_Background").Find("Background").gameObject.GetComponent<AspectRatioFitter>();
 
 
         androidUser = new TargetActor();
@@ -247,17 +224,10 @@ public class ARVINO_GPS : MonoBehaviour
             if (classNativeToolkitExists)
             {
                 // START NativeToolkit GPS Interface
-                DebugConsole.text = "Starting NativeToolkit " + NativeToolkit.StartLocation();
                 GPS = true;
                 gpsEnabled.Invoke();
             }
-            else
-            {
-                //if not installed change to Unity3D GPS
-                DebugConsole.text = "Warning: NativeToolkit not present in Unity3D!\n using Unit3D GPS interface (less acurate)" + NativeToolkit.StartLocation();
 
-
-            }
 
         }
 
@@ -274,7 +244,7 @@ public class ARVINO_GPS : MonoBehaviour
             {
                 if (Input.location.status == LocationServiceStatus.Failed)
                 {
-                    MyAltText.text = "Location Service Failed";
+                    return;
                 }
                 else // if we have valid location services, run everything else
                 {
@@ -303,9 +273,9 @@ public class ARVINO_GPS : MonoBehaviour
                                 fit.aspectRatio = ratio;
 
                                 float scaleY = cam.videoVerticallyMirrored ? -1.0f : 1.0f;
-                                background.rectTransform.localScale = new Vector3(1f, scaleY, 1f);
+                                //background.rectTransform.localScale = new Vector3(1f, scaleY, 1f);
                                 int orient = -cam.videoRotationAngle;
-                                background.rectTransform.localEulerAngles = new Vector3(0, 0, orient);
+                                //background.rectTransform.localEulerAngles = new Vector3(0, 0, orient);
                             }
 
                             //Update Gyro
@@ -338,9 +308,7 @@ public class ARVINO_GPS : MonoBehaviour
         //---------------------------
         if (Application.isEditor)
         {
-            // no need to show video on rawimage background so
-            background.enabled = false;
-            fit.enabled = false;
+
 
             // Simulator mouse look
             if (Input.GetMouseButton(1))
@@ -353,16 +321,22 @@ public class ARVINO_GPS : MonoBehaviour
                 compassAngle = currentRotation.x - 90;
                 //compassRose.rotation = Quaternion.Euler(0, 0, compassAngle);
                 compass3d.localRotation = Quaternion.Euler(0, compassAngle, 0);
-                TargetManager.instance.NorthReversed3d.localRotation = Quaternion.Euler(0, -compassAngle, 0);
+
 
             }
 
 
-            UpdateUI();
+            _UserLat = EdLatitude;
+            _UserLon = EdLongitude;
+            _UserCoords = new Vector2((float)_UserLon, (float)_UserLat);
+            //UpdateUI();
+
 
 
             // if we have added the user marker, handle its rotation
-            if (OnlineMapsMarkerManager.instance.items.Count > 0)
+            if (OnlineMapsMarkerManager.instance.items.Count == 0)
+                SetupMapAndMarker();
+            else
                 OnlineMapsMarkerManager.instance.items[0].rotationDegree = compassAngle;
 
         }
@@ -377,14 +351,10 @@ public class ARVINO_GPS : MonoBehaviour
         androidUser._Lon = _UserLon;
         androidUser._Alt = _UserAlt;
 
-        MyAltText.text = $"My Altitude: {_UserAlt}";
-        MyLatText.text = $"LAT: {_UserLat}";
-        MyLonText.text = $"LON: {_UserLon}";
 
         _UserCoords = new Vector2((float)_UserLon, (float)_UserLat);
 
-        // always keep this updated
-        elevationSourceText.text = isGPSAltitude ? "GPS Altitude" : "Elevation Data";
+
     }
 
     ///<summary>Called from the UI</summary>

@@ -9,13 +9,12 @@ public class UIManager : MonoBehaviour
 
     public GameObject compassRing;
     public GameObject baseUI;
-    public GameObject optionsPanel;
-    public GameObject gpsDebugPanel;
-    public GameObject statusPanel;
-    public GameObject distanceSlider;
+
+
+
+
     public GameObject map;
     public GameObject mapTargetButtons;
-    public GameObject CustomCoordsPanel;
 
     public Camera arCamera;
 
@@ -28,19 +27,17 @@ public class UIManager : MonoBehaviour
 
 
 
-    public Text distanceFilterText;
-    public Text listenToText;
+
     public bool showCompassRing = true;
     public bool showTargetRing = true;
     public bool displayGeometry = false;
     public bool displayDistanceFilter = false;
     public bool displayMap = true;
 
-    public bool displayFriendlies = false;
     public bool displayBox = true;
     public bool displayInActive = false;
     public bool alwaysActive = true;
-    public bool displayCustomCoords = false;
+
 
     public float distanceFilter = 0.5f;
 
@@ -54,18 +51,13 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         instance = this;
-        optionsPanel.SetActive(false);
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
-        distanceSlider.SetActive(false);
         map.SetActive(false);
         mapTargetButtons.SetActive(false);
         arCameraInitialRotation = arCamera.transform.localRotation;
         Targets.SetActive(false);
         HideTargets.SetActive(false);
-        statusPanel.SetActive(false);
         selectedTargetPanel.SetActive(false);
-        CustomCoordsPanel.SetActive(displayCustomCoords);
-        //gameVoiceControl.onStartListening();
 
         // start SONUS with map screen first
         map.SetActive(true);
@@ -90,17 +82,9 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void ToggleOptions()
-    {
-        optionsPanel.SetActive(!optionsPanel.activeInHierarchy);
-        if (optionsPanel.activeInHierarchy)
-            distanceSlider.SetActive(false);
-    }
 
-    public void ToggleStatus()
-    {
-        statusPanel.SetActive(!statusPanel.activeInHierarchy);
-    }
+
+
 
     public void ToggleCompassRing()
     {
@@ -119,11 +103,7 @@ public class UIManager : MonoBehaviour
 
     }
 
-    public void ToggleFriendlies()
-    {
-        displayFriendlies = !displayFriendlies;
 
-    }
 
     public void ToggleBoundingBox()
     {
@@ -140,30 +120,7 @@ public class UIManager : MonoBehaviour
         alwaysActive = !alwaysActive;
     }
 
-    public void GPSEnabled()
-    {
-        gpsDebugPanel.SetActive(false);
-    }
 
-    public void ToggleDistanceFilter()
-    {
-        displayDistanceFilter = !displayDistanceFilter;
-        distanceSlider.SetActive(displayDistanceFilter);
-        // if we are seeing the distance slider, hide the compass
-        showCompassRing = !displayDistanceFilter;
-        // if we are seeing the slider
-        if (displayDistanceFilter)
-        {
-            // hide the other panels
-            statusPanel.SetActive(false);
-            optionsPanel.SetActive(false);
-        }
-    }
-
-    public void SetDistanceFilter(float newDistance)
-    {
-        distanceFilter = (float)System.Math.Round((double)newDistance, 2);
-    }
 
     public void ToggleMap()
     {
@@ -174,10 +131,6 @@ public class UIManager : MonoBehaviour
 
 
     }
-
-
-
-
 
 
     public void ShowAddTargetPanel()
@@ -199,11 +152,6 @@ public class UIManager : MonoBehaviour
     }
 
 
-    public void ToggleCustomCoords()
-    {
-        displayCustomCoords = !displayCustomCoords;
-        CustomCoordsPanel.SetActive(displayCustomCoords);
-    }
 
 
     private void Update()
@@ -211,7 +159,7 @@ public class UIManager : MonoBehaviour
         if (compassRing.activeInHierarchy != showCompassRing)
             compassRing.SetActive(showCompassRing);
 
-        distanceFilterText.text = distanceFilter.ToString() + "km";
+
 
     }
 }
