@@ -3797,12 +3797,14 @@ MonoBehaviour:
   compassRing: {fileID: 1839427643}
   baseUI: {fileID: 1483923300}
   map: {fileID: 1623235223}
-  mapTargetButtons: {fileID: 0}
   arCamera: {fileID: 2005604711}
   ShowTargets: {fileID: 18945437}
   HideTargets: {fileID: 1790905284}
   Targets: {fileID: 0}
   selectedTargetPanel: {fileID: 963673492}
+  arImage: {fileID: 21300000, guid: 0422e5360f68a7d44a5aa806b649d1e0, type: 3}
+  mapImage: {fileID: 21300000, guid: cc32f77d0e9a04d4b84ec97369e37981, type: 3}
+  mapButtonImage: {fileID: 906923640}
   showCompassRing: 1
   showTargetRing: 1
   displayGeometry: 0

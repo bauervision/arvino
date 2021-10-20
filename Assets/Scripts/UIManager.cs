@@ -10,11 +10,7 @@ public class UIManager : MonoBehaviour
     public GameObject compassRing;
     public GameObject baseUI;
 
-
-
-
     public GameObject map;
-    public GameObject mapTargetButtons;
 
     public Camera arCamera;
 
@@ -25,9 +21,10 @@ public class UIManager : MonoBehaviour
 
     public GameObject selectedTargetPanel;
 
+    public Sprite arImage;
+    public Sprite mapImage;
 
-
-
+    public Image mapButtonImage;
     public bool showCompassRing = true;
     public bool showTargetRing = true;
     public bool displayGeometry = false;
@@ -53,7 +50,6 @@ public class UIManager : MonoBehaviour
         instance = this;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         map.SetActive(false);
-        mapTargetButtons.SetActive(false);
         arCameraInitialRotation = arCamera.transform.localRotation;
         Targets.SetActive(false);
         HideTargets.SetActive(false);
@@ -61,7 +57,6 @@ public class UIManager : MonoBehaviour
 
         // start SONUS with map screen first
         map.SetActive(true);
-        mapTargetButtons.SetActive(true);
         ShowTargets.SetActive(true);
     }
 
@@ -103,8 +98,6 @@ public class UIManager : MonoBehaviour
 
     }
 
-
-
     public void ToggleBoundingBox()
     {
         displayBox = !displayBox;
@@ -126,10 +119,9 @@ public class UIManager : MonoBehaviour
     {
         displayMap = !displayMap;
         map.SetActive(displayMap);
-        mapTargetButtons.SetActive(displayMap);
         ShowTargets.SetActive(displayMap);
 
-
+        mapButtonImage.sprite = displayMap ? arImage : mapImage;
     }
 
 
