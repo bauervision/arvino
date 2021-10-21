@@ -14,8 +14,6 @@ public class ARVINO_GPS : MonoBehaviour
     public static ARVINO_GPS Instance { set; get; }
 
     #region UI Related
-    public Transform compass3d = null;
-
 
     public UnityEvent OnGPSLoaded = new UnityEvent();
     public OnlineMaps _map;
@@ -64,24 +62,7 @@ public class ARVINO_GPS : MonoBehaviour
 
     public UnityEvent gpsEnabled = new UnityEvent();
 
-
-
     public bool isGPSAltitude = false;
-
-    private string customLat = string.Empty;
-    private string customLong = string.Empty;
-    private bool useCustomCoords = false;
-    public void SetCustomLat(string newLat)
-    {
-        customLat = newLat;
-    }
-    public void SetCustomLong(string newLong)
-    {
-        customLong = newLong;
-    }
-
-
-
 
     private GameObject cameraContainer;
 
@@ -102,7 +83,6 @@ public class ARVINO_GPS : MonoBehaviour
 
     private Vector2 currentRotation;
 
-    TargetActor androidUser = null;
 
     #endregion
 
@@ -131,11 +111,8 @@ public class ARVINO_GPS : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         // load debugUI
-        // background = transform.Find("AR_BackgroundCamera").Find("UI_Background").Find("Background").gameObject.GetComponent<RawImage>();
-        // fit = transform.Find("AR_BackgroundCamera").Find("UI_Background").Find("Background").gameObject.GetComponent<AspectRatioFitter>();
-
-
-        androidUser = new TargetActor();
+        background = transform.Find("AR_BackgroundCamera").Find("UI_Background").Find("Background").gameObject.GetComponent<RawImage>();
+        fit = transform.Find("AR_BackgroundCamera").Find("UI_Background").Find("Background").gameObject.GetComponent<AspectRatioFitter>();
 
         if (Application.isEditor)
         {
@@ -220,13 +197,11 @@ public class ARVINO_GPS : MonoBehaviour
             arReady = true;
 
             //GPS
-            bool classNativeToolkitExists = (null != Type.GetType("NativeToolkit"));
-            if (classNativeToolkitExists)
-            {
-                // START NativeToolkit GPS Interface
-                GPS = true;
-                gpsEnabled.Invoke();
-            }
+
+            // START NativeToolkit GPS Interface
+            GPS = true;
+            gpsEnabled.Invoke();
+
 
 
         }
@@ -251,12 +226,11 @@ public class ARVINO_GPS : MonoBehaviour
                     OnGPSLoaded.Invoke();
 
                     // if we want to useCustomCoords then the setting will occur right away
-                    if (!useCustomCoords)
-                    {
-                        _UserLat = Input.location.lastData.latitude;
-                        _UserLon = Input.location.lastData.longitude;
-                        _UserAlt = 0;//GetUserElevationData();
-                    }
+
+                    _UserLat = Input.location.lastData.latitude;
+                    _UserLon = Input.location.lastData.longitude;
+                    _UserAlt = 0;//GetUserElevationData();
+
                     _UserCoords = new Vector2((float)_UserLon, (float)_UserLat);
 
 
@@ -273,9 +247,9 @@ public class ARVINO_GPS : MonoBehaviour
                                 fit.aspectRatio = ratio;
 
                                 float scaleY = cam.videoVerticallyMirrored ? -1.0f : 1.0f;
-                                //background.rectTransform.localScale = new Vector3(1f, scaleY, 1f);
+                                background.rectTransform.localScale = new Vector3(1f, scaleY, 1f);
                                 int orient = -cam.videoRotationAngle;
-                                //background.rectTransform.localEulerAngles = new Vector3(0, 0, orient);
+                                background.rectTransform.localEulerAngles = new Vector3(0, 0, orient);
                             }
 
                             //Update Gyro
@@ -284,15 +258,12 @@ public class ARVINO_GPS : MonoBehaviour
                         }
                     }
 
-
-                    // make sure all UI fields match current data 
-                    UpdateUI();
-                    // finally update the position of the user's marker as well
-                    OnlineMapsMarkerManager.instance.items[0].SetPosition(_UserLon, _UserLat);
-
-
-                    // if we have added the user marker, handle its rotation
-                    if (OnlineMapsMarkerManager.instance.items.Count > 0)
+                    if (OnlineMapsMarkerManager.instance.items.Count == 0)
+                    {
+                        SetupMapAndMarker();
+                        OnlineMapsMarkerManager.instance.items[0].SetPosition(_UserLon, _UserLat);
+                    }
+                    else
                     {
                         float _heading = Mathf.Round(Input.compass.trueHeading);
                         OnlineMapsMarkerManager.instance.items[0].rotationDegree = _heading;
@@ -319,10 +290,6 @@ public class ARVINO_GPS : MonoBehaviour
                 currentRotation.y = Mathf.Clamp(currentRotation.y, -80, 80);
                 Camera.main.transform.rotation = Quaternion.Euler(currentRotation.y, currentRotation.x, 0);
                 compassAngle = currentRotation.x - 90;
-                //compassRose.rotation = Quaternion.Euler(0, 0, compassAngle);
-                compass3d.localRotation = Quaternion.Euler(0, compassAngle, 0);
-
-
             }
 
 
@@ -332,24 +299,17 @@ public class ARVINO_GPS : MonoBehaviour
 
             // if we have added the user marker, handle its rotation
             if (OnlineMapsMarkerManager.instance.items.Count == 0)
+            {
                 SetupMapAndMarker();
+                OnlineMapsMarkerManager.instance.items[0].SetPosition(_UserLon, _UserLat);
+            }
             else
                 OnlineMapsMarkerManager.instance.items[0].rotationDegree = compassAngle;
 
         }
     }
 
-    private void UpdateUI()
-    {
-        androidUser._Lat = _UserLat;
-        androidUser._Lon = _UserLon;
-        androidUser._Alt = _UserAlt;
 
-
-        _UserCoords = new Vector2((float)_UserLon, (float)_UserLat);
-
-
-    }
 
     ///<summary>Called from the UI</summary>
     public void ToggleElevationSource()

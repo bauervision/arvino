@@ -29,7 +29,6 @@ public class AddTargetOnClick : MonoBehaviour
     {
 
         Debug.Log("Map Click");
-        ClearMarkerData();
 
         currentTarget = null;
 
@@ -55,7 +54,6 @@ public class AddTargetOnClick : MonoBehaviour
     ///<summary> Fired off when the user clicks a marker on the map. </summary>
     public static void OnTargetClick(OnlineMapsMarkerBase marker)
     {
-        UIManager.instance.selectedTargetPanel.SetActive(true);
         UIHover.overUI = false;
         currentTarget = marker["data"] as TargetActor;
 
@@ -74,13 +72,8 @@ public class AddTargetOnClick : MonoBehaviour
 
     public void ClearTargets()
     {
-        ClearMarkerData();
-        // set that we aren't adding new targets right now
-
-
         // clear all the current markers
         OnlineMapsMarkerManager.RemoveAllItems();
-
 
         // re-add the user
         OnlineMapsMarkerManager.CreateItem(ARVINO_GPS.Instance._UserCoords, "User");
@@ -88,11 +81,7 @@ public class AddTargetOnClick : MonoBehaviour
     }
 
 
-    private void ClearMarkerData()
-    {
-        UIManager.instance.selectedTargetPanel.SetActive(false);
 
-    }
 
     public static void Remove_Target(ARVINOActor removedTarget)
     {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class TargetManager : MonoBehaviour
 {
@@ -9,10 +10,9 @@ public class TargetManager : MonoBehaviour
 
     public Color[] indicatorColors;
     public RectTransform targetRing = null;
-    public Transform compass3d = null;
 
     public Text gpsDataText;
-    public Text headingText;
+    public TextMeshProUGUI HeadingText;
 
     private bool startTracking = false;
 
@@ -47,14 +47,15 @@ public class TargetManager : MonoBehaviour
 
     private void Update()
     {
+        if (ARVINO_GPS.Instance._UserLon == 0)
+            return;
+
         //Keep user coords updated from device
         userCoords.x = (float)ARVINO_GPS.Instance._UserLon;
         userCoords.y = (float)ARVINO_GPS.Instance._UserLat;
         string myLat = userCoords.y.ToString();
         string myLon = userCoords.x.ToString();
         gpsDataText.text = $"LAT:{myLat}    LON:{myLon}";
-
-
 
         if (startTracking)
         {
@@ -63,67 +64,22 @@ public class TargetManager : MonoBehaviour
             float yVelocity = 0.0f;
             float zAngle = Mathf.SmoothDampAngle(targetRing.eulerAngles.z, Input.compass.trueHeading, ref yVelocity, smooth);
             targetRing.rotation = Quaternion.Euler(0, 0, zAngle);
-            compass3d.localRotation = Quaternion.Euler(0, zAngle, 0);
 
-            headingText.text = DegreesToCardinalDetailed(Input.compass.trueHeading);
+
+
+
         }
 
-        if (ARVINO_GPS.Instance._UserLon == 0)
-            return;
-
-
-        // once we start getting target data
-        if ((loadedTargets.Count > 0) || (loadedFriendlies.Count > 0))
+        if (Application.isEditor)
         {
-            HandleFiltering();
-        }
-
-    }
-
-    #region UI Updates
-
-    private void HandleFiltering()
-    {
-        //if (instance.loadedFriendlies.Count > 0)
-        foreach (GameObject friend in instance.loadedFriendlies)
-            FilterTrackers(friend, true);
-
-        foreach (GameObject target in instance.loadedTargets)
-            FilterTrackers(target, false);
-    }
-
-
-    private void FilterTrackers(GameObject tracker, bool isFriendly)
-    {
-        // setup the Vector2 for this target
-        Vector2 targetCoords = new Vector2((float)tracker.GetComponent<ARVINO_Target>()._Lon, (float)tracker.GetComponent<ARVINO_Target>()._Lat);
-
-
-        if (GetDistanceFromTarget(targetCoords) > UIManager.instance.distanceFilter)
-        {
-            tracker.GetComponent<ARVINO_Target>().HideMyTracker();
-            return;
+            float cAngle = ARVINO_GPS.compassAngle;
+            cAngle = cAngle < 0 ? cAngle + 360 : cAngle;
+            HeadingText.text = DegreesToCardinalDetailed(cAngle);
         }
         else
-            tracker.GetComponent<ARVINO_Target>().ShowMyTracker();
+            HeadingText.text = DegreesToCardinalDetailed(Input.compass.trueHeading);
     }
 
-    public static void ToggleTargetTrackers()
-    {
-        foreach (GameObject tracker in instance.loadedTargets)
-        {
-            tracker.GetComponent<ARVINO_Target>().ToggleMyTracker();
-        }
-
-        foreach (GameObject tracker in instance.loadedFriendlies)
-        {
-            tracker.GetComponent<ARVINO_Target>().ToggleMyTracker();
-        }
-
-
-    }
-
-    #endregion
 
 
 
@@ -211,17 +167,6 @@ public class TargetManager : MonoBehaviour
         RemoveActorFromScene(removedTarget, loadedTargets);
     }
 
-    /// <summary>Remove this drone actor from the scene</summary>
-    private void RemoveDrone(ARVINOActor removedDrone)
-    {
-        RemoveActorFromScene(removedDrone, loadedFriendlies);
-    }
-
-    /// <summary>Remove this android actor from the scene</summary>
-    private void RemoveAndroid(ARVINOActor removedAndroid)
-    {
-        RemoveActorFromScene(removedAndroid, loadedFriendlies);
-    }
 
     #endregion
 

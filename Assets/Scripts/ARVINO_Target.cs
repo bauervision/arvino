@@ -98,64 +98,24 @@ public class ARVINO_Target : MonoBehaviour
 
         HandlePosUpdate();
 
-        // only handle active target changes if we want to see them
-        if (!UIManager.instance.alwaysActive)
-            HandleActiveTargetState();
-        else
+        _isActive = true;
+        myTracker.GetComponent<Image>().color = _myTgtColor;
+        myTracker.transform.GetChild(1).GetComponent<Text>().color = _ActiveTextColor;
+        myTracker.transform.GetChild(2).GetComponent<Text>().color = _ActiveTextColor;
+
+
+
+        //if we have a tracker, and our color for whatever reason isnt set, set it
+        if (myTracker != null && (myTracker.GetComponent<Image>().color != _myTgtColor))
         {
-            _isActive = true;
             myTracker.GetComponent<Image>().color = _myTgtColor;
-            myTracker.transform.GetChild(1).GetComponent<Text>().color = _ActiveTextColor;
-            myTracker.transform.GetChild(2).GetComponent<Text>().color = _ActiveTextColor;
+            myTracker.transform.GetChild(1).GetComponent<Text>().color = new Color(1f, 0.8f, 0.4f, 1f);//acctive yellow
+            myTracker.transform.GetChild(2).GetComponent<Text>().color = new Color(1f, 0.8f, 0.4f, 1f);//acctive yellow
         }
 
-        // set the detections, if any. 
-        // note: if we have 1 detection, that means that 1 target has a 2nd target grouped with it.
-        //therefore we actually show 2 instead of 1 
-        detectionsText.text = (_Detections > 0) ? (_Detections + 1).ToString() : "";
+        if (myIndicator != null && (myIndicator.transform.GetChild(0).GetComponent<Image>().color != _myTgtColor))
+            myIndicator.transform.GetChild(0).GetComponent<Image>().color = _myTgtColor;
 
-
-        // if this target has been determined to be active
-        if (_isActive)
-        {
-            // handle whether or not we show target geometry
-            transform.GetChild(0).GetComponent<MeshRenderer>().enabled = UIManager.instance.displayGeometry;
-
-            //if we have a tracker, and our color for whatever reason isnt set, set it
-            if (myTracker != null && (myTracker.GetComponent<Image>().color != _myTgtColor))
-            {
-                myTracker.GetComponent<Image>().color = _myTgtColor;
-                myTracker.transform.GetChild(1).GetComponent<Text>().color = new Color(1f, 0.8f, 0.4f, 1f);//acctive yellow
-                myTracker.transform.GetChild(2).GetComponent<Text>().color = new Color(1f, 0.8f, 0.4f, 1f);//acctive yellow
-            }
-
-            if (myIndicator != null && (myIndicator.transform.GetChild(0).GetComponent<Image>().color != _myTgtColor))
-                myIndicator.transform.GetChild(0).GetComponent<Image>().color = _myTgtColor;
-        }
-        else//otherwise it is inActive, meaning it hasn't been updated in 60 seconds
-        {
-            // never show geometry if inactive
-            transform.GetChild(0).GetComponent<MeshRenderer>().enabled = false;
-
-            // first make sure we even want to view inactive targets
-            if (UIManager.instance.displayInActive)
-            {
-                // make sure we have a valid tracker first, then set it to grey as inactive
-                if (myTracker != null && (myTracker.GetComponent<Image>().color != _inActiveTgtColor))
-                {
-                    myTracker.GetComponent<Image>().color = _inActiveTgtColor;
-                    myTracker.transform.GetChild(1).GetComponent<Text>().color = _inActiveTgtColor;
-                    myTracker.transform.GetChild(2).GetComponent<Text>().color = _inActiveTgtColor;
-                }
-
-                if (myIndicator != null && (myIndicator.transform.GetChild(0).GetComponent<Image>().color != _inActiveTgtColor))
-                    myIndicator.transform.GetChild(0).GetComponent<Image>().color = _inActiveTgtColor;
-            }
-            else
-            {
-                HideMyTracker();
-            }
-        }
 
     }
 
@@ -363,11 +323,7 @@ public class ARVINO_Target : MonoBehaviour
         _rect.sizeDelta = (UIManager.instance.displayBox) ? new Vector2(200, 200) : new Vector2(10, 200);
     }
 
-    ///<summary>Called whenver we need to toggle the visual display of the bounding box tracker </summary>
-    public void ToggleMyTracker()
-    {
-        myTracker.GetComponent<Image>().enabled = UIManager.instance.displayGeometry;
-    }
+
 
     public void HideMyTracker()
     {
@@ -397,8 +353,6 @@ public class ARVINO_Target : MonoBehaviour
     /// </summary>
     public void UpdatePosition(ARVINOActor actor)
     {
-        if (myTracker != null)
-            myTracker.GetComponent<Image>().enabled = !UIManager.instance.displayGeometry;
 
         // run through some simple checks to make sure we dont update needlessly
         bool positionNeedsUpdate = false;
