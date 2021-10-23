@@ -13,6 +13,8 @@ public class ARVINO_GPS : MonoBehaviour
 
     public static ARVINO_GPS Instance { set; get; }
 
+    public Text gpsText;
+
     #region UI Related
 
     public UnityEvent OnGPSLoaded = new UnityEvent();
@@ -93,6 +95,7 @@ public class ARVINO_GPS : MonoBehaviour
             // ask user permission to use the GPS
             if (!Permission.HasUserAuthorizedPermission(Permission.FineLocation))
                 Permission.RequestUserPermission(Permission.FineLocation);
+
             // ask user permission to use the Camera
             if (!Permission.HasUserAuthorizedPermission(Permission.Camera))
                 Permission.RequestUserPermission(Permission.Camera);
@@ -196,15 +199,10 @@ public class ARVINO_GPS : MonoBehaviour
             // flag
             arReady = true;
 
-            //GPS
-
-            // START NativeToolkit GPS Interface
-            GPS = true;
-            gpsEnabled.Invoke();
-
-
 
         }
+
+
 
         // SET USER HIGHT
         transform.position = new Vector3(0, BodyHeight, 0);
@@ -215,72 +213,47 @@ public class ARVINO_GPS : MonoBehaviour
 
         if (!Application.isEditor)
         {
-            if (GPS)
+
+            if (Input.location.status == LocationServiceStatus.Failed)
             {
-                if (Input.location.status == LocationServiceStatus.Failed)
+                return;
+            }
+            else // if we have valid location services, run everything else
+            {
+
+                _UserLat = Input.location.lastData.latitude;
+                _UserLon = Input.location.lastData.longitude;
+                _UserAlt = 0;//GetUserElevationData();
+                _UserCoords = new Vector2((float)_UserLon, (float)_UserLat);
+
+                compassAngle = Mathf.RoundToInt(Input.compass.trueHeading);
+
+                // if we dont want to see the map, show camera things
+                if (!UIManager.instance.displayMap)
                 {
-                    return;
-                }
-                else // if we have valid location services, run everything else
-                {
-                    OnGPSLoaded.Invoke();
-
-                    // if we want to useCustomCoords then the setting will occur right away
-
-                    _UserLat = Input.location.lastData.latitude;
-                    _UserLon = Input.location.lastData.longitude;
-                    _UserAlt = 0;//GetUserElevationData();
-
-                    _UserCoords = new Vector2((float)_UserLon, (float)_UserLat);
-
-
-                    // if we dont want to see the map, show camera things
-                    if (!UIManager.instance.displayMap)
+                    if (arReady)
                     {
-                        if (arReady)
+                        if (ShowLARCameraOnBackground)
                         {
+                            //update Camera
+                            float ratio = (float)cam.width / (float)cam.height;
+                            fit.aspectRatio = ratio;
 
-                            if (ShowLARCameraOnBackground)
-                            {
-                                //update Camera
-                                float ratio = (float)cam.width / (float)cam.height;
-                                fit.aspectRatio = ratio;
-
-                                float scaleY = cam.videoVerticallyMirrored ? -1.0f : 1.0f;
-                                background.rectTransform.localScale = new Vector3(1f, scaleY, 1f);
-                                int orient = -cam.videoRotationAngle;
-                                background.rectTransform.localEulerAngles = new Vector3(0, 0, orient);
-                            }
-
-                            //Update Gyro
-                            transform.localRotation = gyro.attitude * rotation;
-
+                            float scaleY = cam.videoVerticallyMirrored ? -1.0f : 1.0f;
+                            background.rectTransform.localScale = new Vector3(1f, scaleY, 1f);
+                            int orient = -cam.videoRotationAngle;
+                            background.rectTransform.localEulerAngles = new Vector3(0, 0, orient);
                         }
+                        //Update Gyro
+                        transform.localRotation = gyro.attitude * rotation;
                     }
-
-                    if (OnlineMapsMarkerManager.instance.items.Count == 0)
-                    {
-                        SetupMapAndMarker();
-                        OnlineMapsMarkerManager.instance.items[0].SetPosition(_UserLon, _UserLat);
-                    }
-                    else
-                    {
-                        float _heading = Mathf.Round(Input.compass.trueHeading);
-                        OnlineMapsMarkerManager.instance.items[0].rotationDegree = _heading;
-                    }
-
                 }
-
             }
         }
 
 
-        // EDITOR
-        //---------------------------
         if (Application.isEditor)
         {
-
-
             // Simulator mouse look
             if (Input.GetMouseButton(1))
             {
@@ -292,30 +265,32 @@ public class ARVINO_GPS : MonoBehaviour
                 compassAngle = currentRotation.x - 90;
             }
 
-
             _UserLat = EdLatitude;
             _UserLon = EdLongitude;
             _UserCoords = new Vector2((float)_UserLon, (float)_UserLat);
 
-            // if we have added the user marker, handle its rotation
-            if (OnlineMapsMarkerManager.instance.items.Count == 0)
-            {
-                SetupMapAndMarker();
-                OnlineMapsMarkerManager.instance.items[0].SetPosition(_UserLon, _UserLat);
-            }
-            else
-                OnlineMapsMarkerManager.instance.items[0].rotationDegree = compassAngle;
+        }
 
+        if (_UserLat != 0 && _UserLon != 0)
+        {
+            HandleUserMarkerAndPosition();
+            gpsText.text = "LAT: " + _UserLat + "  LNG: " + _UserLon;
         }
     }
 
 
-
-    ///<summary>Called from the UI</summary>
-    public void ToggleElevationSource()
+    private void HandleUserMarkerAndPosition()
     {
-        isGPSAltitude = !isGPSAltitude;
+        // if we have added the user marker, handle its rotation
+        if (OnlineMapsMarkerManager.instance.items.Count == 0)
+        {
+            SetupMapAndMarker();
+            OnlineMapsMarkerManager.instance.items[0].SetPosition(_UserLon, _UserLat);
+        }
+        else
+            OnlineMapsMarkerManager.instance.items[0].rotationDegree = compassAngle;
     }
+
 
     ///<summary>Handle which source to grab elevation data from</summary>
     public float GetUserElevationData()
@@ -324,28 +299,6 @@ public class ARVINO_GPS : MonoBehaviour
             return Input.location.lastData.altitude;
         else
             return OnlineMapsElevationManagerBase.GetUnscaledElevationByCoordinate(_UserLon, _UserLat);
-    }
-
-    ///<summary>While we don't yet have valid coordinate data, wait 1 second to see if we get it  </summary>
-    public IEnumerator WaitForGPS()
-    {
-        // if we are running on the device, do the check
-        if (!Application.isEditor)
-        {
-            while (_UserLat == 0)
-            {
-                yield return new WaitForSeconds(1);
-            }
-            SetupMapAndMarker();
-
-
-        }
-
-        if (Application.isEditor)
-        {
-            yield return new WaitForSeconds(1);
-            SetupMapAndMarker();
-        }
     }
 
 
@@ -357,6 +310,7 @@ public class ARVINO_GPS : MonoBehaviour
         // add the marker for our current position
         OnlineMapsMarkerManager.CreateItem(_UserCoords, "You");
     }
+
 
 
 

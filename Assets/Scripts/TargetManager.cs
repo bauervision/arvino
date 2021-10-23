@@ -11,7 +11,7 @@ public class TargetManager : MonoBehaviour
     public Color[] indicatorColors;
     public RectTransform targetRing = null;
 
-    public Text gpsDataText;
+
     public TextMeshProUGUI HeadingText;
 
     private bool startTracking = false;
@@ -55,7 +55,6 @@ public class TargetManager : MonoBehaviour
         userCoords.y = (float)ARVINO_GPS.Instance._UserLat;
         string myLat = userCoords.y.ToString();
         string myLon = userCoords.x.ToString();
-        gpsDataText.text = $"LAT:{myLat}    LON:{myLon}";
 
         if (startTracking)
         {
@@ -64,10 +63,6 @@ public class TargetManager : MonoBehaviour
             float yVelocity = 0.0f;
             float zAngle = Mathf.SmoothDampAngle(targetRing.eulerAngles.z, Input.compass.trueHeading, ref yVelocity, smooth);
             targetRing.rotation = Quaternion.Euler(0, 0, zAngle);
-
-
-
-
         }
 
         if (Application.isEditor)
