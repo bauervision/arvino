@@ -47,6 +47,8 @@ public class AddTargetOnClick : MonoBehaviour
             //create the new target data
             TargetActor newTarget = new TargetActor(0, lat, lng);
             newTarget._Alt = alt;
+
+            TargetManager.HandleNewTargetData(newTarget);
         }
 
     }
@@ -57,15 +59,6 @@ public class AddTargetOnClick : MonoBehaviour
         UIHover.overUI = false;
         currentTarget = marker["data"] as TargetActor;
 
-
-    }
-
-
-    public static DateTime GetTime(string timestamp)
-    {
-        double ticks = Convert.ToInt64(timestamp);
-        TimeSpan time = TimeSpan.FromMilliseconds(ticks);
-        return new DateTime(1970, 1, 1) + time;
 
     }
 

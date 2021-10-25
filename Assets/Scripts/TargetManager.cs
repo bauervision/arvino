@@ -74,6 +74,7 @@ public class TargetManager : MonoBehaviour
         else
         {
             HeadingText.text = DegreesToCardinalDetailed(Mathf.RoundToInt(Input.compass.trueHeading));
+
         }
     }
 
@@ -86,7 +87,7 @@ public class TargetManager : MonoBehaviour
 
 
 
-    /// <summary>Called from FirebaseInit whenever new target data arrives. Immediately add it to the scene for processing </summary>
+    /// <summary>Called from AddTargetOnClick whenever new target data is added. Immediately add it to the scene for processing </summary>
     public static void HandleNewTargetData(TargetActor newTarget)
     {
         instance.SetNewTarget(newTarget);
@@ -103,10 +104,6 @@ public class TargetManager : MonoBehaviour
     {
         instance.UpdateTarget(targetUpdated);
     }
-
-
-
-
 
 
     #region Set New Actors

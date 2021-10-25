@@ -10,12 +10,7 @@ public class ARVINO_Target : MonoBehaviour
     public static ARVINO_Target instance;
 
     #region Public Class members
-    public float _headingToCamera;
-    public Color _myTgtColor;
-    public Color _inActiveTgtColor;
-    public Color _ActiveTextColor;
 
-    public bool _isListening = false;
     public double _Lat;
     public double _Lon;
     public double _Alt;
@@ -45,7 +40,6 @@ public class ARVINO_Target : MonoBehaviour
 
     private Camera mainCam = null;
     private Text distanceText;
-    private Text detectionsText;
 
     #endregion
 
@@ -56,9 +50,6 @@ public class ARVINO_Target : MonoBehaviour
     private RectTransform _rect;
     private Vector2 myCoords;
     private Vector3 refVelocity = Vector3.zero;
-    private AudioSource myAudioSource;
-
-    private Coroutine runningCoroutine;
 
 
     ///<summary>When the file initial loads, find and create all the key required assets </summary>
@@ -75,7 +66,6 @@ public class ARVINO_Target : MonoBehaviour
             myTracker = Instantiate(Resources.Load<GameObject>("ModelTracker"), parentCanvas);
             _trackerImage = myTracker.GetComponent<Image>();
             distanceText = myTracker.transform.GetChild(1).gameObject.GetComponent<Text>();
-            detectionsText = myTracker.transform.GetChild(2).gameObject.GetComponent<Text>();
             _rect = myTracker.GetComponent<RectTransform>();
 
         }
@@ -87,35 +77,12 @@ public class ARVINO_Target : MonoBehaviour
     {
         mainCam = Camera.main;
         instance = this;
-        myAudioSource = transform.GetComponent<AudioSource>();
-
-
     }
 
     ///<summary>Main update loop, determine whether we display the child mesh geometry for rendering, and position updates </summary>
     private void Update()
     {
-
         HandlePosUpdate();
-
-        _isActive = true;
-        myTracker.GetComponent<Image>().color = _myTgtColor;
-        myTracker.transform.GetChild(1).GetComponent<Text>().color = _ActiveTextColor;
-        myTracker.transform.GetChild(2).GetComponent<Text>().color = _ActiveTextColor;
-
-
-
-        //if we have a tracker, and our color for whatever reason isnt set, set it
-        if (myTracker != null && (myTracker.GetComponent<Image>().color != _myTgtColor))
-        {
-            myTracker.GetComponent<Image>().color = _myTgtColor;
-            myTracker.transform.GetChild(1).GetComponent<Text>().color = new Color(1f, 0.8f, 0.4f, 1f);//acctive yellow
-            myTracker.transform.GetChild(2).GetComponent<Text>().color = new Color(1f, 0.8f, 0.4f, 1f);//acctive yellow
-        }
-
-        if (myIndicator != null && (myIndicator.transform.GetChild(0).GetComponent<Image>().color != _myTgtColor))
-            myIndicator.transform.GetChild(0).GetComponent<Image>().color = _myTgtColor;
-
 
     }
 
@@ -291,36 +258,8 @@ public class ARVINO_Target : MonoBehaviour
         else // less than 1 kilometer, so switch to meters
             distanceText.text = (UIManager.instance.displayBox) ? ((float)System.Math.Round(KilometerToMeter(distanceToCamera), 2)).ToString() + "m" : "";
 
-        float closeScale = 0.4f;
-        float midScale = 0.3f;
-        float farScale = 0.2f;
 
-        // now let's handle how the tracker icon ( bounding box ) looks based on its distance to the user
-        // we will change it's opacity and border thickness depending
-        if (distanceToCamera >= 0.5f)
-        {
-            _myTgtColor.a = 0.3f;
-            _trackerImage.color = _myTgtColor;
-            myIndicator.transform.GetChild(0).localScale = new Vector3(farScale, farScale, farScale);
-        }
-        else if (distanceToCamera < 0.5f)
-        {
-            if (distanceToCamera >= 0.25)
-            {
-                _myTgtColor.a = 0.5f;
-                _trackerImage.color = _myTgtColor;
-                myIndicator.transform.GetChild(0).localScale = new Vector3(midScale, midScale, midScale);
-            }
-            else // within 0.25km of user
-            {
-                _myTgtColor.a = 1f;
-                _trackerImage.color = _myTgtColor;
-                myIndicator.transform.GetChild(0).localScale = new Vector3(closeScale, closeScale, closeScale);
-            }
-        }
 
-        // finally handle bounding box vs vertical line
-        _rect.sizeDelta = (UIManager.instance.displayBox) ? new Vector2(200, 200) : new Vector2(10, 200);
     }
 
 
