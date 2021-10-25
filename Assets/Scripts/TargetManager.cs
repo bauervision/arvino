@@ -60,7 +60,7 @@ public class TargetManager : MonoBehaviour
         {
             transform.rotation = Quaternion.Euler(0, Input.compass.trueHeading, 0);
             float smooth = 0.1f;
-            float yVelocity = 0.0f;
+            float yVelocity = 0.1f;
             float zAngle = Mathf.SmoothDampAngle(targetRing.eulerAngles.z, Input.compass.trueHeading, ref yVelocity, smooth);
             targetRing.rotation = Quaternion.Euler(0, 0, zAngle);
         }
@@ -72,7 +72,9 @@ public class TargetManager : MonoBehaviour
             HeadingText.text = DegreesToCardinalDetailed(cAngle);
         }
         else
-            HeadingText.text = DegreesToCardinalDetailed(Input.compass.trueHeading);
+        {
+            HeadingText.text = DegreesToCardinalDetailed(Mathf.RoundToInt(Input.compass.trueHeading));
+        }
     }
 
 

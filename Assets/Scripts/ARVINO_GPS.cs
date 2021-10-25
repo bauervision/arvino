@@ -10,14 +10,10 @@ using UnityEngine.Events;
 public class ARVINO_GPS : MonoBehaviour
 {
 
-
     public static ARVINO_GPS Instance { set; get; }
-
     public Text gpsText;
 
     #region UI Related
-
-    public UnityEvent OnGPSLoaded = new UnityEvent();
     public OnlineMaps _map;
 
     #endregion
@@ -46,9 +42,6 @@ public class ARVINO_GPS : MonoBehaviour
     public Boolean ShowLARCameraOnBackground = true;
 
 
-    [Header("Debug Settings")]
-    public Boolean ShowDebugConsole;
-
     [Header("Editor Mode simulator")]
     public double EdLatitude;
     public double EdLongitude;
@@ -57,12 +50,7 @@ public class ARVINO_GPS : MonoBehaviour
     public float MouseSensibility = 5f;
 
 
-    [Header("Virtual Floor")]
-    public bool ReceiveShadows = true;
-
     public static float compassAngle;
-
-    public UnityEvent gpsEnabled = new UnityEvent();
 
     public bool isGPSAltitude = false;
 
@@ -101,8 +89,6 @@ public class ARVINO_GPS : MonoBehaviour
                 Permission.RequestUserPermission(Permission.Camera);
         }
 
-
-
     }
 
 
@@ -119,22 +105,10 @@ public class ARVINO_GPS : MonoBehaviour
 
         if (Application.isEditor)
         {
-            //set horizon visible on editor mode
-            // UNLESS ShowLARCameraOnBackground (USING VUFORIA OR ARCORE)
             if (ShowLARCameraOnBackground)
                 GetComponent<Camera>().clearFlags = CameraClearFlags.Skybox;
 
-
-
-            gpsEnabled.Invoke();
             GPS = true;
-            // Warn user to install NativeToolkit if its not
-            bool classNativeToolkitExists = (null != Type.GetType("NativeToolkit"));
-            if (!classNativeToolkitExists)
-            {
-                Debug.Log("Warning: please install NativeToolkit for better GPS precision!");
-            }
-
 
             // COORDINATES
             _UserLat = EdLatitude;
@@ -152,11 +126,6 @@ public class ARVINO_GPS : MonoBehaviour
             transform.SetParent(cameraContainer.transform);
             cameraContainer.transform.rotation = Quaternion.Euler(-90f, 90F, 0); //(90f, 0, 0);
 
-            // check if we support Gyro
-            if (!SystemInfo.supportsGyroscope)
-            {
-                Debug.Log("no Gyro");
-            }
 
             // BACKGROUND CAMERA
             if (ShowLARCameraOnBackground)
@@ -198,12 +167,7 @@ public class ARVINO_GPS : MonoBehaviour
 
             // flag
             arReady = true;
-
-
         }
-
-
-
         // SET USER HIGHT
         transform.position = new Vector3(0, BodyHeight, 0);
     }
@@ -214,19 +178,16 @@ public class ARVINO_GPS : MonoBehaviour
         if (!Application.isEditor)
         {
 
-            if (Input.location.status == LocationServiceStatus.Failed)
+            if (Input.location.status != LocationServiceStatus.Failed)
             {
-                return;
-            }
-            else // if we have valid location services, run everything else
-            {
-
                 _UserLat = Input.location.lastData.latitude;
                 _UserLon = Input.location.lastData.longitude;
                 _UserAlt = 0;//GetUserElevationData();
                 _UserCoords = new Vector2((float)_UserLon, (float)_UserLat);
 
-                compassAngle = Mathf.RoundToInt(Input.compass.trueHeading);
+                float smooth = 0.1f;
+                float yVelocity = 0.1f;
+                compassAngle = Mathf.SmoothDampAngle(compassAngle, Mathf.RoundToInt(Input.compass.trueHeading), ref yVelocity, smooth);
 
                 // if we dont want to see the map, show camera things
                 if (!UIManager.instance.displayMap)
