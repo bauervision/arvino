@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour
     public GameObject baseUI;
     public GameObject map;
     public Camera arCamera;
+    public GameObject selectedTargetPanel;
 
     public Sprite arImage;
     public Sprite mapImage;
@@ -40,6 +41,7 @@ public class UIManager : MonoBehaviour
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         map.SetActive(false);
         arCameraInitialRotation = arCamera.transform.localRotation;
+        selectedTargetPanel.SetActive(false);
     }
 
 
@@ -79,6 +81,13 @@ public class UIManager : MonoBehaviour
         displayMap = !displayMap;
         map.SetActive(displayMap);
         mapButtonImage.sprite = displayMap ? arImage : mapImage;
+        if (!map.activeInHierarchy)
+        {
+            selectedTargetPanel.SetActive(false);
+            showTargetRing = true;
+        }
+        else
+            showTargetRing = false;
     }
 
 

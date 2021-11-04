@@ -120,7 +120,7 @@ public class TargetManager : MonoBehaviour
         // add a marker to the map
         Texture2D markerTexture = targets[0];
         OnlineMapsMarker newTargetMarker = OnlineMapsMarkerManager.CreateUserItem(actor._Lon, actor._Lat, markerTexture, "Target");
-        newTargetMarker["data"] = actor;
+        newTargetMarker["data"] = (TargetActor)actor;
 
         newTargetMarker.OnClick += AddTargetOnClick.OnTargetClick;
 

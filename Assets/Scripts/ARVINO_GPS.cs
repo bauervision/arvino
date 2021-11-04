@@ -273,6 +273,10 @@ public class ARVINO_GPS : MonoBehaviour
     }
 
 
+    public void RefreshCoords()
+    {
+        _map.SetPositionAndZoom(_UserLon, _UserLat, 18);
+    }
 
 
 
