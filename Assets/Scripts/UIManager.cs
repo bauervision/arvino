@@ -12,6 +12,7 @@ public class UIManager : MonoBehaviour
     public GameObject map;
     public Camera arCamera;
     public GameObject selectedTargetPanel;
+    public GameObject statusWindow;
 
     public Sprite arImage;
     public Sprite mapImage;
@@ -42,6 +43,7 @@ public class UIManager : MonoBehaviour
         map.SetActive(false);
         arCameraInitialRotation = arCamera.transform.localRotation;
         selectedTargetPanel.SetActive(false);
+        statusWindow.SetActive(false);
     }
 
 
@@ -62,7 +64,10 @@ public class UIManager : MonoBehaviour
     }
 
 
-
+    public void PointerOverUI()
+    {
+        print("Pointer over UI");
+    }
 
 
     public void ToggleCompassRing()
@@ -90,6 +95,11 @@ public class UIManager : MonoBehaviour
             showTargetRing = false;
     }
 
+
+    public void ToggleStatusWindow()
+    {
+        statusWindow.SetActive(!statusWindow.activeInHierarchy);
+    }
 
 
     private void Update()

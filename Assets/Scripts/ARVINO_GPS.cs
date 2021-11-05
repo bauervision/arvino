@@ -11,7 +11,6 @@ public class ARVINO_GPS : MonoBehaviour
 {
 
     public static ARVINO_GPS Instance { set; get; }
-    public Text gpsText;
 
     #region UI Related
     public OnlineMaps _map;
@@ -48,6 +47,14 @@ public class ARVINO_GPS : MonoBehaviour
     public double EdAltitude;
     [Range(0, 20)]
     public float MouseSensibility = 5f;
+
+    [Header("Status Panel")]
+    public Text LatitudeText;
+    public Text LongitudeText;
+    public Text HorizonalAccuracyText;
+    public Text VerticalAccuracyText;
+    public Text AltitudeText;
+    public Text HeadingText;
 
 
     public static float compassAngle;
@@ -182,6 +189,13 @@ public class ARVINO_GPS : MonoBehaviour
             {
                 _UserLat = Input.location.lastData.latitude;
                 _UserLon = Input.location.lastData.longitude;
+
+                HorizonalAccuracyText.text = Input.location.lastData.horizontalAccuracy.ToString();
+                VerticalAccuracyText.text = Input.location.lastData.verticalAccuracy.ToString();
+                LatitudeText.text = _UserLat.ToString();
+                LongitudeText.text = _UserLon.ToString();
+                AltitudeText.text = Input.location.lastData.altitude.ToString();
+
                 _UserAlt = 0;//GetUserElevationData();
                 _UserCoords = new Vector2((float)_UserLon, (float)_UserLat);
 
@@ -189,6 +203,7 @@ public class ARVINO_GPS : MonoBehaviour
                 float yVelocity = 0.1f;
                 compassAngle = Mathf.SmoothDampAngle(compassAngle, Mathf.RoundToInt(Input.compass.trueHeading), ref yVelocity, smooth);
 
+                HeadingText.text = compassAngle.ToString();
                 // if we dont want to see the map, show camera things
                 if (!UIManager.instance.displayMap)
                 {
@@ -235,7 +250,6 @@ public class ARVINO_GPS : MonoBehaviour
         if (_UserLat != 0 && _UserLon != 0)
         {
             HandleUserMarkerAndPosition();
-            gpsText.text = "LAT: " + _UserLat + "  LNG: " + _UserLon;
         }
     }
 

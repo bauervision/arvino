@@ -22,10 +22,12 @@ public class UIHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     public void OnPointerDown(PointerEventData pointerEventData)
     {
         overUI = true;
+        print("Pressed over UI");
     }
 
     public void OnPointerUp(PointerEventData pointerEventData)
     {
         overUI = false;
+        print("Released over UI");
     }
 }

@@ -12,10 +12,14 @@ public class AddTargetOnClick : MonoBehaviour
 
     public static OnlineMapsMarker selectedMarker = null;
 
+    public GameObject addTargetButton;
+
     private double lng, lat;
     private static Text targetCoordsText;
     private static Text targetHeadingText;
     private static Text targetDistanceText;
+
+    public bool canAddTargets = true;
 
 
     private void Awake()
@@ -36,40 +40,56 @@ public class AddTargetOnClick : MonoBehaviour
     {
         if (UIManager.instance.selectedTargetPanel.activeInHierarchy)
             UIManager.instance.selectedTargetPanel.SetActive(false);
+        canAddTargets = true;
     }
 
     private void OnMapClick()
     {
         currentTarget = null;
 
-        // Get the coordinates under the cursor.
-
-        OnlineMapsControlBase.instance.GetCoords(out lng, out lat);
-
-        float alt = OnlineMapsElevationManagerBase.GetUnscaledElevationByCoordinate(lng, lat);
-
-        // Create a label for the marker.
-        string label = "Target " + (OnlineMapsMarkerManager.CountItems + 1);
-
-        // make sure we have selected a target to place first
-        if (lat != 0 && lng != 0)
+        if (canAddTargets)
         {
-            //create the new target data
-            TargetActor newTarget = new TargetActor(0, lat, lng);
-            newTarget._Alt = alt;
 
-            TargetManager.HandleNewTargetData(newTarget);
+            // Get the coordinates under the cursor.
+
+            OnlineMapsControlBase.instance.GetCoords(out lng, out lat);
+
+            float alt = OnlineMapsElevationManagerBase.GetUnscaledElevationByCoordinate(lng, lat);
+
+            // Create a label for the marker.
+            string label = "Target " + (OnlineMapsMarkerManager.CountItems + 1);
+
+            // make sure we have selected a target to place first
+            if (lat != 0 && lng != 0)
+            {
+                //create the new target data
+                TargetActor newTarget = new TargetActor(0, lat, lng);
+                newTarget._Alt = alt;
+
+                TargetManager.HandleNewTargetData(newTarget);
 
 
+            }
         }
 
     }
+
+
+    public void CanAddTargets()
+    {
+        canAddTargets = true;
+    }
+
+    public void CannotAddTargets()
+    {
+        canAddTargets = false;
+    }
+
 
     ///<summary> Fired off when the user clicks a marker on the map. </summary>
     public static void OnTargetClick(OnlineMapsMarkerBase marker)
     {
         UIManager.instance.selectedTargetPanel.SetActive(true);
-        UIHover.overUI = false;
         currentTarget = marker["data"] as TargetActor;
         // handle UI
         targetCoordsText.text = $"Lat:{currentTarget._Lat}\nLng:{currentTarget._Lon}";
@@ -109,9 +129,10 @@ public class AddTargetOnClick : MonoBehaviour
 
     }
 
-    public static void Remove_SelectedTarget()
+    public void Remove_SelectedTarget()
     {
         UIManager.instance.selectedTargetPanel.SetActive(false);
+        canAddTargets = true;
         // we know that this actor needs to be removed, but we need to figure out which marker represents it
         List<OnlineMapsMarker> currentMarkerList = OnlineMapsMarkerManager.instance.items;
         int indexOfMarker = -1;
@@ -130,6 +151,8 @@ public class AddTargetOnClick : MonoBehaviour
 
         if (targetMarker != null)
             TargetManager.HandleRemovedTargetData(targetMarker);
+
+
     }
 
 
@@ -147,12 +170,10 @@ public class AddTargetOnClick : MonoBehaviour
         OnlineMaps.instance.projection.CoordinatesToTile(markerCoords.x, markerCoords.y, zoom, out markerTileX, out markerTileY);
 
         // Calculate the angle between locations.
-        double angle = OnlineMapsUtils.Angle2D(userTileX, userTileY, markerTileX, markerTileY) + 90;
+        float angle = (float)OnlineMapsUtils.Angle2D(userTileX, userTileY, markerTileX, markerTileY) + 90;
         angle = (angle > 360) ? angle - 360 : (angle < 0) ? angle + 360 : angle;
 
-
-
-        return angle.ToString();
+        return Mathf.RoundToInt(angle).ToString();
     }
     private static string HandleDistanceToCamera(TargetActor selectedTarget)
     {
@@ -178,6 +199,20 @@ public class AddTargetOnClick : MonoBehaviour
         METER = km * 1000;
 
         return METER;
+    }
+
+
+    private void Update()
+    {
+        if (!UIManager.instance.map.activeInHierarchy)
+        {
+            if (addTargetButton.activeInHierarchy && canAddTargets)
+                addTargetButton.SetActive(false);
+
+            if (!addTargetButton.activeInHierarchy && !canAddTargets)
+                addTargetButton.SetActive(true);
+        }
+
     }
 
 }
