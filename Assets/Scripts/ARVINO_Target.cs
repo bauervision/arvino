@@ -185,12 +185,6 @@ public class ARVINO_Target : MonoBehaviour
         _Rotation.z = 0;
         transform.localEulerAngles = _Rotation;
 
-        print("Target Heading: " + _Dir);
-        print("Target Distance: " + _Dis);
-        print("transform: x " + transform.rotation.x);
-        print("transform: y " + transform.rotation.y);
-        print("transform: z " + transform.rotation.z);
-
         HandleTargetRingIndicatorUpdate();
     }
 

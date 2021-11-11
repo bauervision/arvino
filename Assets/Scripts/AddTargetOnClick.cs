@@ -52,16 +52,17 @@ public class AddTargetOnClick : MonoBehaviour
             // Get the coordinates under the cursor.
             OnlineMapsControlBase.instance.GetCoords(out lng, out lat);
 
-            // Create a label for the marker.
-            string label = "Target " + (OnlineMapsMarkerManager.CountItems + 1);
-
             // make sure we have selected a target to place first
             if (lat != 0 && lng != 0)
             {
                 //create the new target data
-                TargetActor newTarget = new TargetActor(0, lat, lng);
+                TargetActor newTarget = new TargetActor();
+                newTarget._Lat = lat;
+                newTarget._Lon = lng;
+                newTarget._ID = System.Guid.NewGuid().ToString();
                 newTarget._Direction = ARVINO_Utils.HandleHeadingToCamera((float)lat, (float)lng);
                 newTarget._Distance = ARVINO_Utils.HandleDistanceToCamera((float)lat, (float)lng);
+                // now add it to the scene
                 TargetManager.HandleNewTargetData(newTarget);
             }
         }
@@ -69,15 +70,8 @@ public class AddTargetOnClick : MonoBehaviour
     }
 
 
-    public void CanAddTargets()
-    {
-        canAddTargets = true;
-    }
-
-    public void CannotAddTargets()
-    {
-        canAddTargets = false;
-    }
+    public void CanAddTargets() { canAddTargets = true; }
+    public void CannotAddTargets() { canAddTargets = false; }
 
 
     ///<summary> Fired off when the user clicks a marker on the map. </summary>
@@ -125,27 +119,32 @@ public class AddTargetOnClick : MonoBehaviour
 
     public void Remove_SelectedTarget()
     {
-        UIManager.instance.selectedTargetPanel.SetActive(false);
-        canAddTargets = true;
+
         // we know that this actor needs to be removed, but we need to figure out which marker represents it
         List<OnlineMapsMarker> currentMarkerList = OnlineMapsMarkerManager.instance.items;
+
         int indexOfMarker = -1;
         TargetActor targetMarker = null;
+        // run through all of the markers and match up the data
         foreach (OnlineMapsMarker marker in currentMarkerList)
         {
-            // run through all of the markers and match up the data
-            targetMarker = marker["data"] as TargetActor;
+            TargetActor checkTarget = marker["data"] as TargetActor;
 
-            if (targetMarker != null && targetMarker._ID == currentTarget._ID)
+            if (checkTarget != null && checkTarget._ID == currentTarget._ID)
+            {
                 indexOfMarker = OnlineMapsMarkerManager.instance.items.IndexOf(marker);
+                targetMarker = checkTarget;
+            }
         }
 
-        if (indexOfMarker != -1)
+        if (indexOfMarker != -1 && targetMarker != null)
+        {
             OnlineMapsMarkerManager.RemoveItem(currentMarkerList[indexOfMarker]);
-
-        if (targetMarker != null)
             TargetManager.HandleRemovedTargetData(targetMarker);
-
+            currentTarget = null;
+            UIManager.instance.selectedTargetPanel.SetActive(false);
+            canAddTargets = true;
+        }
 
     }
 

@@ -90,7 +90,7 @@ public class TargetManager : MonoBehaviour
     /// <summary>Called from AddTargetOnClick whenever new target data is added. Immediately add it to the scene for processing </summary>
     public static void HandleNewTargetData(TargetActor newTarget)
     {
-        instance.SetNewTarget(newTarget);
+        instance.AddActorToScene(newTarget, instance.loadedTargets);
     }
 
     /// <summary>Called from AddTargetOnClick whenever a target is removed. Pull it out of the scene </summary>
@@ -115,19 +115,12 @@ public class TargetManager : MonoBehaviour
         actorList.Add(newActorSpawn);
         // add a marker to the map
         Texture2D markerTexture = targets[0];
-        OnlineMapsMarker newTargetMarker = OnlineMapsMarkerManager.CreateUserItem(actor._Lon, actor._Lat, markerTexture, "Target");
+        OnlineMapsMarker newTargetMarker = OnlineMapsMarkerManager.CreateUserItem(actor._Lon, actor._Lat, markerTexture, actor._ID);
         newTargetMarker["data"] = (TargetActor)actor;
 
         newTargetMarker.OnClick += AddTargetOnClick.OnTargetClick;
 
     }
-
-    /// <summary>Add a new GPS based target to the 3d scene and its data to the correct list of gameobjects</summary>
-    private void SetNewTarget(TargetActor newTarget)
-    {
-        AddActorToScene(newTarget, loadedTargets);
-    }
-
 
 
     #endregion
