@@ -66,7 +66,7 @@ public class ARVINO_GPS : MonoBehaviour
 
     // Gyro
     public Gyroscope gyro;
-    private Quaternion rotation;
+    public Quaternion rotation;
 
     // Camera
     private GameObject LAR_BackgroundCamera;
@@ -78,7 +78,13 @@ public class ARVINO_GPS : MonoBehaviour
     private bool arReady = false;
     public bool GPS = false;
 
-    private Vector2 currentRotation;
+    public Vector2 currentRotation;
+
+
+    public Text GyroX;
+    public Text GyroY;
+    public Text GyroZ;
+    public Text GyroW;
 
 
     #endregion
@@ -109,6 +115,14 @@ public class ARVINO_GPS : MonoBehaviour
         background = transform.Find("AR_BackgroundCamera").Find("UI_Background").Find("Background").gameObject.GetComponent<RawImage>();
         fit = transform.Find("AR_BackgroundCamera").Find("UI_Background").Find("Background").gameObject.GetComponent<AspectRatioFitter>();
 
+
+        //Position Camera
+        cameraContainer = new GameObject("Camera Container");
+        cameraContainer.transform.position = transform.position;
+        transform.SetParent(cameraContainer.transform);
+        //cameraContainer.transform.rotation = Quaternion.Euler(-90f, 90f, 0); //(90f, 0, 0);
+
+
         if (Application.isEditor)
         {
             if (ShowLARCameraOnBackground)
@@ -125,14 +139,6 @@ public class ARVINO_GPS : MonoBehaviour
 
         if (!Application.isEditor)
         {
-
-            // Position Camera
-            cameraContainer = new GameObject("Camera Container");
-            cameraContainer.transform.position = transform.position;
-            transform.SetParent(cameraContainer.transform);
-            cameraContainer.transform.rotation = Quaternion.Euler(-90f, 90F, 0); //(90f, 0, 0);
-
-
             // BACKGROUND CAMERA
             if (ShowLARCameraOnBackground)
             {
@@ -169,21 +175,22 @@ public class ARVINO_GPS : MonoBehaviour
             // enable gyro
             gyro = Input.gyro;
             gyro.enabled = true;
-            rotation = new Quaternion(0, 0, 1, 0);
 
             // flag
             arReady = true;
         }
+
+
         // SET USER HIGHT
-        transform.position = Vector3.zero;
+        transform.position = new Vector3(0, BodyHeight, 0);
     }
+
 
     private void Update()
     {
 
         if (!Application.isEditor)
         {
-
             if (Input.location.status != LocationServiceStatus.Failed)
             {
                 _UserLat = Input.location.lastData.latitude;
@@ -219,8 +226,7 @@ public class ARVINO_GPS : MonoBehaviour
                             int orient = -cam.videoRotationAngle;
                             background.rectTransform.localEulerAngles = new Vector3(0, 0, orient);
                         }
-                        //Update Gyro
-                        transform.localRotation = gyro.attitude * rotation;
+                        //
                     }
                 }
             }
@@ -236,7 +242,6 @@ public class ARVINO_GPS : MonoBehaviour
                 currentRotation.y -= Input.GetAxis("Mouse Y") * MouseSensibility;
                 currentRotation.x = Mathf.Repeat(currentRotation.x, 360);
                 currentRotation.y = Mathf.Clamp(currentRotation.y, -80, 80);
-                Camera.main.transform.rotation = Quaternion.Euler(currentRotation.y, currentRotation.x, 0);
                 compassAngle = currentRotation.x;
             }
 
@@ -249,6 +254,25 @@ public class ARVINO_GPS : MonoBehaviour
         if (_UserLat != 0 && _UserLon != 0)
         {
             HandleUserMarkerAndPosition();
+        }
+
+        //Update Gyro
+
+        Quaternion cameraQuaternion = (!Application.isEditor) ? gyro.attitude : new Quaternion(0, 0, 1, 0);
+        transform.localRotation = (Application.isEditor) ? Quaternion.Euler(currentRotation.y, currentRotation.x, 0) : cameraQuaternion;
+        if (!Application.isEditor)
+        {
+            GyroX.text = Mathf.RoundToInt(cameraQuaternion.x).ToString();
+            GyroY.text = Mathf.RoundToInt(cameraQuaternion.y).ToString();
+            GyroZ.text = Mathf.RoundToInt(cameraQuaternion.z).ToString();
+            GyroW.text = Mathf.RoundToInt(cameraQuaternion.w).ToString();
+        }
+        else
+        {
+            GyroX.text = "";
+            GyroY.text = "";
+            GyroZ.text = "";
+            GyroW.text = "";
         }
     }
 

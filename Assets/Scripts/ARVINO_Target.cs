@@ -163,9 +163,9 @@ public class ARVINO_Target : MonoBehaviour
         distanceToCamera = _Dis;
         // if 1 kilometer or greater, use "km"
         if (distanceToCamera >= 1.0f)
-            distanceText.text = (UIManager.instance.displayBox) ? distanceToCamera.ToString() + "km" : "";
+            distanceText.text = distanceToCamera.ToString() + "km";
         else // less than 1 kilometer, so switch to meters
-            distanceText.text = (UIManager.instance.displayBox) ? ((float)System.Math.Round(KilometerToMeter(distanceToCamera), 2)).ToString() + "m" : "";
+            distanceText.text = ((float)System.Math.Round(KilometerToMeter(distanceToCamera), 2)).ToString() + "m";
 
     }
 
