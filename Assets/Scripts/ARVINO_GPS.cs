@@ -175,7 +175,7 @@ public class ARVINO_GPS : MonoBehaviour
             arReady = true;
         }
         // SET USER HIGHT
-        transform.position = new Vector3(0, BodyHeight, 0);
+        transform.position = Vector3.zero;
     }
 
     private void Update()

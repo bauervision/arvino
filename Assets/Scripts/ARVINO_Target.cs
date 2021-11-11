@@ -86,8 +86,6 @@ public class ARVINO_Target : MonoBehaviour
     ///<summary>Determine any position updates by interpolating where we are, with where we need to be</summary>
     private void HandlePosUpdate()
     {
-        // update this target position
-
         _Rotation.x = 0;
         _Rotation.y = _Dir;
         _Rotation.z = 0;
@@ -107,17 +105,18 @@ public class ARVINO_Target : MonoBehaviour
             HandleTargetRingIndicatorUpdate();
 
         // get the heading of this target in relation to the camera
-        _Heading.x = 0;
-        _Heading.y = _Dir;
-        _Heading.z = 0;
 
+        _Heading = transform.GetChild(0).transform.position - mainCam.transform.position;
+        _Heading.y = 0;
+
+        float headingDotProduct = Vector3.Dot(mainCam.transform.forward, _Heading);
 
         // if this target is in view of the camera
-        if (Vector3.Dot(mainCam.transform.forward, _Heading) > 0)
+        if (headingDotProduct > 15)
         {
             myTracker.SetActive(true);
             // find where this target is located in the camera view
-            Vector3 trackerPos = mainCam.WorldToScreenPoint(this.transform.position);
+            Vector3 trackerPos = mainCam.WorldToScreenPoint(transform.GetChild(0).transform.position);
             // update the bounding box to that screen position
             myTracker.transform.position = trackerPos;
             // figure out the distance from the camera
