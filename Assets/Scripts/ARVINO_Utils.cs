@@ -44,6 +44,42 @@ public static class ARVINO_Utils
     }
 
 
+    public static float HandleHeadingToCamera(float lat, float lon)
+    {
+        Vector3 userCoords = ARVINO_GPS.Instance._UserCoords;
+
+        Vector3 markerCoords = new Vector2(lon, lat);
+
+        // Calculate the tile position of locations.
+        int zoom = OnlineMaps.instance.zoom;
+
+        double userTileX, userTileY, markerTileX, markerTileY;
+        OnlineMaps.instance.projection.CoordinatesToTile(userCoords.x, userCoords.y, zoom, out userTileX, out userTileY);
+        OnlineMaps.instance.projection.CoordinatesToTile(markerCoords.x, markerCoords.y, zoom, out markerTileX, out markerTileY);
+
+        // Calculate the angle between locations.
+        float angle = (float)OnlineMapsUtils.Angle2D(userTileX, userTileY, markerTileX, markerTileY) + 90;
+        angle = (angle > 360) ? angle - 360 : (angle < 0) ? angle + 360 : angle;
+
+        return Mathf.Round(angle);
+    }
+    public static float HandleDistanceToCamera(float lat, float lon)
+    {
+        // get distance between us and the camera
+        Vector2 myCoords = new Vector2(lon, lat);
+        float distanceToCamera = ARVINO_Utils.DistanceBetweenPoints(myCoords, ARVINO_GPS.Instance._UserCoords).magnitude;
+        return (float)System.Math.Round(distanceToCamera, 2);
+    }
+
+    public static double KilometerToMeter(double km)
+    {
+        double METER = 0;
+
+        METER = km * 1000;
+
+        return METER;
+    }
+
 
 
 }

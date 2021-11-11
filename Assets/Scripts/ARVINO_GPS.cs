@@ -104,7 +104,6 @@ public class ARVINO_GPS : MonoBehaviour
     private void Start()
     {
         Instance = this;
-        DontDestroyOnLoad(gameObject);
 
         // load debugUI
         background = transform.Find("AR_BackgroundCamera").Find("UI_Background").Find("Background").gameObject.GetComponent<RawImage>();
@@ -238,7 +237,7 @@ public class ARVINO_GPS : MonoBehaviour
                 currentRotation.x = Mathf.Repeat(currentRotation.x, 360);
                 currentRotation.y = Mathf.Clamp(currentRotation.y, -80, 80);
                 Camera.main.transform.rotation = Quaternion.Euler(currentRotation.y, currentRotation.x, 0);
-                compassAngle = currentRotation.x - 90;
+                compassAngle = currentRotation.x;
             }
 
             _UserLat = EdLatitude;

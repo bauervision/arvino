@@ -49,12 +49,8 @@ public class AddTargetOnClick : MonoBehaviour
 
         if (canAddTargets)
         {
-
             // Get the coordinates under the cursor.
-
             OnlineMapsControlBase.instance.GetCoords(out lng, out lat);
-
-            float alt = OnlineMapsElevationManagerBase.GetUnscaledElevationByCoordinate(lng, lat);
 
             // Create a label for the marker.
             string label = "Target " + (OnlineMapsMarkerManager.CountItems + 1);
@@ -64,11 +60,9 @@ public class AddTargetOnClick : MonoBehaviour
             {
                 //create the new target data
                 TargetActor newTarget = new TargetActor(0, lat, lng);
-                newTarget._Alt = alt;
-
+                newTarget._Direction = ARVINO_Utils.HandleHeadingToCamera((float)lat, (float)lng);
+                newTarget._Distance = ARVINO_Utils.HandleDistanceToCamera((float)lat, (float)lng);
                 TargetManager.HandleNewTargetData(newTarget);
-
-
             }
         }
 

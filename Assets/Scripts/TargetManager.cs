@@ -93,17 +93,13 @@ public class TargetManager : MonoBehaviour
         instance.SetNewTarget(newTarget);
     }
 
-    /// <summary>Called from FirebaseInit whenever a target is removed from the data. Pull it out of the scene </summary>
+    /// <summary>Called from AddTargetOnClick whenever a target is removed. Pull it out of the scene </summary>
     public static void HandleRemovedTargetData(TargetActor targetToRemove)
     {
         instance.RemoveTarget(targetToRemove);
     }
 
-    /// <summary>Called from FirebaseInit whenever updated target data arrives. Immediately process the data </summary>
-    public static void HandleUpdatedTargetData(TargetActor targetUpdated)
-    {
-        instance.UpdateTarget(targetUpdated);
-    }
+
 
 
     #region Set New Actors
@@ -165,28 +161,7 @@ public class TargetManager : MonoBehaviour
     #endregion
 
 
-    #region Update Actors
 
-    ///<summary>Identifies the index of this actor in the loaded scene data, and calls its UpdatePosition method  </summary>
-    private void UpdateActorInScene(ARVINOActor actorToUpdate, List<GameObject> actorList)
-    {
-        // find this particular actor in the scene data
-        int indexOfUpdatedActor = actorList.FindIndex((a) => a.GetComponent<ARVINO_Target>()._ID == actorToUpdate._ID);
-        // update its data IF we found it in the scene
-        if (indexOfUpdatedActor != -1)
-            actorList[indexOfUpdatedActor].GetComponent<ARVINO_Target>().UpdatePosition(actorToUpdate);
-    }
-
-    /// <summary>Update this target actor in the scene</summary>
-    private void UpdateTarget(TargetActor updatedTarget)
-    {
-        UpdateActorInScene(updatedTarget, loadedTargets);
-    }
-
-
-
-
-    #endregion
 
 
     #region Utilities
@@ -194,44 +169,6 @@ public class TargetManager : MonoBehaviour
     {
         string[] caridnals = { "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW", "N" };
         return caridnals[(int)System.Math.Round(((double)degrees * 10 % 3600) / 225)];
-    }
-
-
-    public static bool IsWithinARRange(Vector2 myCoords, Vector2 userCoords, float arRange, bool isFriendly)
-    {
-        float distanceToCamera = 0.0f;
-        // get distance between us and the camera
-        distanceToCamera = ARVINO_Utils.DistanceBetweenPoints(myCoords, userCoords).magnitude;
-        float roundedMeterDist = (float)System.Math.Round(distanceToCamera, 2);
-        // if this target is a drone or android and user wants to see
-
-        return (roundedMeterDist <= arRange);
-
-    }
-
-    public static bool IsWithinGroupingRange(Vector2 tgt1Coords, Vector2 tgt2Coords, out float distanceTo)
-    {
-        // get distance between the two targets
-        distanceTo = (float)System.Math.Round(ARVINO_Utils.DistanceBetweenPoints(tgt1Coords, tgt2Coords).magnitude, 2);
-        return distanceTo <= 0.02; // within 10 meters?
-    }
-
-    ///<summary>Check for this actor in the loaded scene data</summary>    
-    public static bool IsInScene(ARVINOActor actorToCheck)
-    {
-        return instance.arTargets.Exists((d) => d._ID == actorToCheck._ID);
-    }
-
-
-
-
-
-
-    public float GetDistanceFromTarget(Vector2 thisTargetCoords)
-    {
-        Vector2 targetCoords = new Vector2((float)thisTargetCoords.x, (float)thisTargetCoords.y);
-        return (float)System.Math.Round(ARVINO_Utils.DistanceBetweenPoints(ARVINO_GPS.Instance._UserCoords, targetCoords).magnitude, 2);
-
     }
     #endregion
 
