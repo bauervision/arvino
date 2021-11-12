@@ -13,6 +13,7 @@ public class UIManager : MonoBehaviour
     public Camera arCamera;
     public GameObject selectedTargetPanel;
     public GameObject statusWindow;
+    public GameObject northPole;
 
     public Sprite arImage;
     public Sprite mapImage;
@@ -101,6 +102,10 @@ public class UIManager : MonoBehaviour
         statusWindow.SetActive(!statusWindow.activeInHierarchy);
     }
 
+    public void ToggleNorthPole()
+    {
+        northPole.SetActive(!northPole.activeInHierarchy);
+    }
 
     private void Update()
     {

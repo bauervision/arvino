@@ -81,10 +81,9 @@ public class ARVINO_GPS : MonoBehaviour
     public Vector2 currentRotation;
 
 
-    public Text GyroX;
-    public Text GyroY;
-    public Text GyroZ;
-    public Text GyroW;
+    public Text CompassHeadingText;
+    public Text CameraRotationText;
+    public Text InitialValueText;
 
 
     #endregion
@@ -116,15 +115,17 @@ public class ARVINO_GPS : MonoBehaviour
         fit = transform.Find("AR_BackgroundCamera").Find("UI_Background").Find("Background").gameObject.GetComponent<AspectRatioFitter>();
 
 
-        //Position Camera
-        cameraContainer = new GameObject("Camera Container");
-        cameraContainer.transform.position = transform.position;
-        transform.SetParent(cameraContainer.transform);
-        //cameraContainer.transform.rotation = Quaternion.Euler(-90f, 90f, 0); //(90f, 0, 0);
+
 
 
         if (Application.isEditor)
         {
+            //Position Camera
+            // cameraContainer = new GameObject("Camera Container");
+            // cameraContainer.transform.position = transform.position;
+            // transform.SetParent(cameraContainer.transform);
+            // cameraContainer.transform.rotation = Quaternion.Euler(-90f, 90f, 0); //(90f, 0, 0);
+
             if (ShowLARCameraOnBackground)
                 GetComponent<Camera>().clearFlags = CameraClearFlags.Skybox;
 
@@ -252,28 +253,26 @@ public class ARVINO_GPS : MonoBehaviour
         }
 
         if (_UserLat != 0 && _UserLon != 0)
-        {
             HandleUserMarkerAndPosition();
-        }
 
-        //Update Gyro
 
-        Quaternion cameraQuaternion = (!Application.isEditor) ? gyro.attitude : new Quaternion(0, 0, 1, 0);
-        transform.localRotation = (Application.isEditor) ? Quaternion.Euler(currentRotation.y, currentRotation.x, 0) : cameraQuaternion;
+        //Quaternion cameraRotation;
         if (!Application.isEditor)
         {
-            GyroX.text = Mathf.RoundToInt(cameraQuaternion.x).ToString();
-            GyroY.text = Mathf.RoundToInt(cameraQuaternion.y).ToString();
-            GyroZ.text = Mathf.RoundToInt(cameraQuaternion.z).ToString();
-            GyroW.text = Mathf.RoundToInt(cameraQuaternion.w).ToString();
+            int currentCamRotation = Mathf.RoundToInt(Camera.main.transform.rotation.eulerAngles.y);
+            CameraRotationText.text = currentCamRotation.ToString();
+            CompassHeadingText.text = compassAngle.ToString();
+
+            InitialValueText.text = (currentCamRotation - compassAngle).ToString();
         }
-        else
+
+
+        if (Application.isEditor)
         {
-            GyroX.text = "";
-            GyroY.text = "";
-            GyroZ.text = "";
-            GyroW.text = "";
+            transform.rotation = Quaternion.Euler(currentRotation.y, currentRotation.x, 0);
         }
+
+
     }
 
 
@@ -313,6 +312,11 @@ public class ARVINO_GPS : MonoBehaviour
     public void RefreshCoords()
     {
         _map.SetPositionAndZoom(_UserLon, _UserLat, 18);
+        OnlineMapsMarkerManager.instance.items[0].SetPosition(_UserLon, _UserLat);
+        // hide the status window
+        UIManager.instance.ToggleStatusWindow();
+        // and show the updated map
+        UIManager.instance.ToggleMap();
     }
 
 
