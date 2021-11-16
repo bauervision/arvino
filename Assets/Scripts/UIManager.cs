@@ -8,12 +8,13 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager instance;
 
-    public GameObject baseUI;
+
     public GameObject map;
     public Camera arCamera;
     public GameObject selectedTargetPanel;
     public GameObject statusWindow;
     public GameObject northPole;
+    public GameObject statsPanel;
 
     public Sprite arImage;
     public Sprite mapImage;
@@ -30,11 +31,6 @@ public class UIManager : MonoBehaviour
     public bool displayBox = true;
 
 
-    public UnityEvent onMinimalUIActive = new UnityEvent();
-    public UnityEvent onMinimalUIDeActive = new UnityEvent();
-
-
-
     private Quaternion arCameraInitialRotation;
 
     private void Start()
@@ -45,24 +41,16 @@ public class UIManager : MonoBehaviour
         arCameraInitialRotation = arCamera.transform.localRotation;
         selectedTargetPanel.SetActive(false);
         statusWindow.SetActive(false);
+        statsPanel.SetActive(false);
     }
 
 
-
-    public void ToggleMinimalUI()
+    public void ToggleStatsPanel()
     {
-
-        if (baseUI.activeInHierarchy)
-        {
-            onMinimalUIActive.Invoke();
-            baseUI.SetActive(false);
-        }
-        else
-        {
-            onMinimalUIDeActive.Invoke();
-            baseUI.SetActive(true);
-        }
+        statsPanel.SetActive(!statsPanel.activeInHierarchy);
     }
+
+
 
 
     public void PointerOverUI()

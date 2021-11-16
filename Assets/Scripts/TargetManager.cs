@@ -160,8 +160,8 @@ public class TargetManager : MonoBehaviour
     #region Utilities
     private static string DegreesToCardinalDetailed(double degrees)
     {
-        string[] caridnals = { "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW", "N" };
-        return caridnals[(int)System.Math.Round(((double)degrees * 10 % 3600) / 225)];
+        string[] caridnals = { "N", "NE", "E", "SE", "S", "SW", "W", "NW", "N" };
+        return caridnals[(int)System.Math.Round(((double)degrees % 360) / 45)];
     }
     #endregion
 

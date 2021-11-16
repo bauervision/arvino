@@ -39,8 +39,16 @@ public class GyroCamera : MonoBehaviour
         if (!Application.isEditor)
         {
             ApplyGyroRotation();
-            ApplyCalibration();
 
+
+
+        }
+    }
+    private void LateUpdate()
+    {
+        if (!Application.isEditor)
+        {
+            ApplyCalibration();
             transform.rotation = Quaternion.Slerp(transform.rotation, _rawGyroRotation.rotation, _smoothing);
         }
     }
@@ -72,7 +80,7 @@ public class GyroCamera : MonoBehaviour
     private void ApplyCalibration()
     {
         int currentCamRotation = Mathf.RoundToInt(Camera.main.transform.rotation.eulerAngles.y);
-        //int compassHeading = Mathf.RoundToInt(Input.compass.trueHeading);
+
         _calibrationYAngle = currentCamRotation - ARVINO_GPS.compassAngle;
         _rawGyroRotation.Rotate(0f, -_calibrationYAngle, 0f, Space.World); // Rotates y angle back however much it deviated when calibrationYAngle was saved.
     }
